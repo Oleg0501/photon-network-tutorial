@@ -677,7 +677,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _searchGamePhotonController: {fileID: 729172439}
-  _gamePhotonController: {fileID: 0}
+  _gamePhotonController: {fileID: 833653986}
 --- !u!1 &1612539927
 GameObject:
   m_ObjectHideFlags: 0
