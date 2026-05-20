@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 namespace Controller
 {
+    [RequireComponent(typeof(PhotonView))]
     public class SearchGamePhotonController : MonoBehaviourPunCallbacks
     {
         public UnityEvent OnGameStartedRPC = new();
@@ -29,6 +30,7 @@ namespace Controller
         
         private void Awake()
         {
+            PhotonNetwork.GameVersion = "1.0";
             _searchGameView.SearchButton.onClick.AddListener(OnSearchButtonClicked);
         }
 
