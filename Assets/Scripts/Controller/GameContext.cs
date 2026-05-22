@@ -7,6 +7,9 @@ namespace Controller
         [SerializeField] private SearchGamePhotonController _searchGamePhotonController;
         [SerializeField] private GamePhotonController _gamePhotonController;
         
+        public bool IsGameStarted { get; private set; }
+        public double GameEndTime { get; private set; }
+        
         private void Awake()
         {
             _searchGamePhotonController.OnGameStartedRPC.AddListener(OnGameStartedRPC);
@@ -14,6 +17,9 @@ namespace Controller
         
         private void OnGameStartedRPC(double gameEndTime)
         {
+            GameEndTime = gameEndTime;
+            IsGameStarted = true;
+            
             _searchGamePhotonController.EnableView(false);
             
             _gamePhotonController.EnableView(true);

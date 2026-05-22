@@ -6,6 +6,7 @@ namespace Controller
 {
     public class GamePhotonController : MonoBehaviourPunCallbacks
     {
+        [SerializeField] private GameContext _gameContext;
         [SerializeField] private GameView _gameView;
 
         private double _gameEndTime;
@@ -17,7 +18,12 @@ namespace Controller
         
         private void Update()
         {
-            var remainingTime = Mathf.Max(0f, (float)(_gameEndTime - PhotonNetwork.Time));
+            if (_gameContext.IsGameStarted == false)
+            {
+                return;
+            }
+            
+            var remainingTime = Mathf.Max(0f, (float)(_gameContext.GameEndTime - PhotonNetwork.Time));
             _gameView.SetTimeText(remainingTime.ToString("F1"));
 
             if (remainingTime <= 0f)
