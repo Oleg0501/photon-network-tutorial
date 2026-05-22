@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,11 @@ namespace UI
     {
         [SerializeField] private Button _gameButton;
         [SerializeField] private Image _gameImage;
-
+        [SerializeField] private TextMeshProUGUI _timeText;
+        [SerializeField] private TextMeshProUGUI _statusText;
+        
         public Button GameButton => _gameButton;
+        public TextMeshProUGUI StatusText => _statusText;
         
         public void StartGame()
         {
@@ -20,6 +24,11 @@ namespace UI
         public void SetImageColor(Color color)
         {
             _gameImage.color = color;
+        }
+
+        public void SetTimeText(string text)
+        {
+            _timeText.text = text;
         }
         
         public Color GetLocalPlayerColor()

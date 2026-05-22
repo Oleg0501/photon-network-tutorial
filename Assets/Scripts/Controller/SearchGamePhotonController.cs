@@ -10,7 +10,7 @@ namespace Controller
     [RequireComponent(typeof(PhotonView))]
     public class SearchGamePhotonController : MonoBehaviourPunCallbacks
     {
-        public UnityEvent OnGameStartedRPC = new();
+        public UnityEvent<double> OnGameStartedRPC = new();
         
         [SerializeField] private SearchGameView _searchGameView;
         
@@ -20,9 +20,7 @@ namespace Controller
         private bool _gameStarted;
         private bool _isLeavingRoom;
         private bool _wantsToFindGame;
-
-        private double _gameEndTime;
-
+        
         public void EnableView(bool enable)
         {
             _searchGameView.gameObject.SetActive(enable);
@@ -122,12 +120,10 @@ namespace Controller
         [PunRPC]
         private void StartGameRPC(double endTime)
         {
-            OnGameStartedRPC?.Invoke();
+            OnGameStartedRPC?.Invoke(endTime);
             
             _gameStarted = true;
             _isLeavingRoom = false;
-            _gameEndTime = endTime;
-            
             _searchGameView.SearchButton.interactable = false;
         }
 
