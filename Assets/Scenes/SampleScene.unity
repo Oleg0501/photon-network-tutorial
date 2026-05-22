@@ -403,7 +403,7 @@ GameObject:
   - component: {fileID: 729172439}
   - component: {fileID: 729172440}
   m_Layer: 0
-  m_Name: SearchGamePhotonController
+  m_Name: GameSearchPhotonController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -439,7 +439,8 @@ MonoBehaviour:
   OnGameStartedRPC:
     m_PersistentCalls:
       m_Calls: []
-  _searchGameView: {fileID: 738775472}
+  _gameContext: {fileID: 1522541264}
+  _gameSearchView: {fileID: 738775472}
   _maxPlayers: 2
   _gameDuration: 60
 --- !u!114 &729172440
@@ -475,7 +476,7 @@ GameObject:
   - component: {fileID: 738775471}
   - component: {fileID: 738775472}
   m_Layer: 5
-  m_Name: SearchGameView
+  m_Name: GameSearchView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -972,7 +973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79dfc367f3b24593a7503df8d795b494, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _searchGamePhotonController: {fileID: 729172439}
+  _gameSearchPhotonController: {fileID: 729172439}
   _gamePhotonController: {fileID: 833653986}
 --- !u!1 &1612539927
 GameObject:

@@ -8,15 +8,31 @@ namespace Controller
     public class GamePhotonController : MonoBehaviourPunCallbacks
     {
         [SerializeField] private GameContext _gameContext;
+        
+        [Header("View")]
         [SerializeField] private GameView _gameView;
-
-        private double _gameEndTime;
+        
+        public void EnableView(bool enable)
+        {
+            _gameView.gameObject.SetActive(enable);
+        }
+        
+        public void InitializeView()
+        {
+            _gameView.StartGame();
+            SetStatusText("Game is started");
+        }
         
         private void Awake()
         {
             _gameView.GameButton.onClick.AddListener(OnGameButtonClicked);
         }
-        
+
+        private void OnDestroy()
+        {
+            _gameView.GameButton.onClick.RemoveListener(OnGameButtonClicked);
+        }
+
         private void Update()
         {
             if (_gameContext.IsGameStarted == false)
@@ -33,32 +49,8 @@ namespace Controller
             }
         }
         
-        private void OnGameButtonClicked()
-        {
-            var playerColor = _gameView.GetLocalPlayerColor();
-            photonView.RPC(nameof(SetImageColorRPC), RpcTarget.All, playerColor.r, playerColor.g, playerColor.b);
-        }
-
-        public void EnableView(bool enable)
-        {
-            _gameView.gameObject.SetActive(enable);
-        }
-
-        public void InitializeView(double gameEndTime)
-        {
-            _gameEndTime = gameEndTime;
-            _gameView.StartGame();
-            SetStatusText("Game is started");
-        }
-        
         private void EndGameAndLeaveRoom()
         {
-            // if (isLeavingRoom)
-            //     return;
-
-            // isLeavingRoom = true;
-            // gameStarted = false;
-
             SetStatusText("Game is complete");
 
             _gameView.GameButton.interactable = false;
@@ -79,6 +71,12 @@ namespace Controller
         private void SetStatusText(string text)
         {
             _gameView.StatusText.text = text;
+        }
+        
+        private void OnGameButtonClicked()
+        {
+            var playerColor = _gameView.GetLocalPlayerColor();
+            photonView.RPC(nameof(SetImageColorRPC), RpcTarget.All, playerColor.r, playerColor.g, playerColor.b);
         }
     }
 }

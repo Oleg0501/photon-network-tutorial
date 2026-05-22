@@ -21,6 +21,11 @@ namespace UI
             _gameImage.color = GetLocalPlayerColor();
         }
 
+        public Color GetLocalPlayerColor()
+        {
+            return PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Color.red : Color.blue;
+        }
+        
         public void SetImageColor(Color color)
         {
             _gameImage.color = color;
@@ -29,11 +34,6 @@ namespace UI
         public void SetTimeText(string text)
         {
             _timeText.text = text;
-        }
-        
-        public Color GetLocalPlayerColor()
-        {
-            return PhotonNetwork.LocalPlayer.ActorNumber == 1 ? Color.red : Color.blue;
         }
     }
 }

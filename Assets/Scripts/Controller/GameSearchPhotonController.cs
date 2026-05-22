@@ -8,51 +8,27 @@ using UnityEngine.Events;
 namespace Controller
 {
     [RequireComponent(typeof(PhotonView))]
-    public class SearchGamePhotonController : MonoBehaviourPunCallbacks
+    public class GameSearchPhotonController : MonoBehaviourPunCallbacks
     {
         public UnityEvent<double> OnGameStartedRPC = new();
         
-        [SerializeField] private SearchGameView _searchGameView;
+        [SerializeField] private GameContext _gameContext;
         
+        [Header("View")]
+        [SerializeField] private GameSearchView _gameSearchView;
+        
+        [Header("Configuration")]
         [SerializeField] private int _maxPlayers;
         [SerializeField] private float _gameDuration;
-
-        private bool _gameStarted;
-        private bool _isLeavingRoom;
+        
         private bool _wantsToFindGame;
         
         public void EnableView(bool enable)
         {
-            _searchGameView.gameObject.SetActive(enable);
+            _gameSearchView.gameObject.SetActive(enable);
         }
         
-        private void Awake()
-        {
-            PhotonNetwork.GameVersion = "1.0";
-            _searchGameView.SearchButton.onClick.AddListener(OnSearchButtonClicked);
-        }
-
-        private void OnSearchButtonClicked()
-        {
-            if (_isLeavingRoom)
-            {
-                return;
-            }
-
-            _wantsToFindGame = true;
-            _searchGameView.SearchButton.interactable = false;
-            SetStatusText("Trying to connect to Photon...");
-            
-            if (PhotonNetwork.IsConnectedAndReady)
-            {
-                PhotonNetwork.JoinRandomRoom();
-                SetStatusText("Connected to Photon. Searching for game...");
-            }
-            else
-            {
-                PhotonNetwork.ConnectUsingSettings();
-            }
-        }
+        #region PunCallbacks
 
         public override void OnConnectedToMaster()
         {
@@ -64,47 +40,53 @@ namespace Controller
             PhotonNetwork.JoinRandomRoom();
             SetStatusText("Connected to Photon. Searching for game...");
         }
-
         
         public override void OnJoinedRoom()
         {
             _wantsToFindGame = false;
-            SetStatusText($"You entered to room. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
-
+            
             if (PhotonNetwork.CurrentRoom.PlayerCount == _maxPlayers)
             {
                 TryStartGameAsMasterClient();
             }
+            
+            SetStatusText($"You entered to room. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
         }
         
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            SetStatusText($"The room not founded. Creating a new room...");
-
-            var roomOptions = new RoomOptions
-            {
-                MaxPlayers = _maxPlayers,
-                IsOpen = true,
-                IsVisible = true
-            };
-
+            var roomOptions = new RoomOptions { MaxPlayers = _maxPlayers, IsOpen = true, IsVisible = true };
             var roomName = "ColorGame_" + Guid.NewGuid().ToString("N");
+            
             PhotonNetwork.CreateRoom(roomName, roomOptions);
+            SetStatusText($"The room not founded. Creating a new room...");
         }
         
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-            SetStatusText($"Player connected. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
-
             if (PhotonNetwork.CurrentRoom.PlayerCount == _maxPlayers)
             {
                 TryStartGameAsMasterClient();
             }
+            
+            SetStatusText($"Player connected. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
+        }
+
+        #endregion
+        
+        private void Awake()
+        {
+            _gameSearchView.SearchButton.onClick.AddListener(OnSearchButtonClicked);
+        }
+
+        private void OnDestroy()
+        {
+            _gameSearchView.SearchButton.onClick.RemoveListener(OnSearchButtonClicked);
         }
         
         private void TryStartGameAsMasterClient()
         {
-            if (!PhotonNetwork.IsMasterClient || _gameStarted)
+            if (!PhotonNetwork.IsMasterClient || _gameContext.IsGameStarted)
             {
                 return;
             }
@@ -113,23 +95,37 @@ namespace Controller
             PhotonNetwork.CurrentRoom.IsVisible = false;
 
             var endGameTime = PhotonNetwork.Time + _gameDuration;
-
             photonView.RPC(nameof(StartGameRPC), RpcTarget.AllBuffered, endGameTime);
         }
         
         [PunRPC]
         private void StartGameRPC(double endTime)
         {
+            _gameSearchView.SearchButton.interactable = false;
             OnGameStartedRPC?.Invoke(endTime);
-            
-            _gameStarted = true;
-            _isLeavingRoom = false;
-            _searchGameView.SearchButton.interactable = false;
         }
 
         private void SetStatusText(string text)
         {
-            _searchGameView.StatusText.text = text;
+            _gameSearchView.StatusText.text = text;
+        }
+        
+        private void OnSearchButtonClicked()
+        {
+            _wantsToFindGame = true;
+            _gameSearchView.SearchButton.interactable = false;
+            
+            if (PhotonNetwork.IsConnectedAndReady)
+            {
+                PhotonNetwork.JoinRandomRoom();
+                SetStatusText("Connected to Photon. Searching for game...");
+            }
+            else
+            {
+                PhotonNetwork.ConnectUsingSettings();
+            }
+            
+            SetStatusText("Trying to connect to Photon...");
         }
     }
 }

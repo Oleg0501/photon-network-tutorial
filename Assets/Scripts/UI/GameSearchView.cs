@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class SearchGameView : MonoBehaviour
+    public class GameSearchView : MonoBehaviour
     {
         [SerializeField] private Button _searchButton;
         [SerializeField] private TextMeshProUGUI _statusText;

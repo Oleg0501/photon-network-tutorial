@@ -4,15 +4,15 @@ namespace Controller
 {
     public class GameContext : MonoBehaviour
     {
-        [SerializeField] private SearchGamePhotonController _searchGamePhotonController;
+        [SerializeField] private GameSearchPhotonController _gameSearchPhotonController;
         [SerializeField] private GamePhotonController _gamePhotonController;
         
-        public bool IsGameStarted { get; private set; }
         public double GameEndTime { get; private set; }
+        public bool IsGameStarted { get; private set; }
         
         private void Awake()
         {
-            _searchGamePhotonController.OnGameStartedRPC.AddListener(OnGameStartedRPC);
+            _gameSearchPhotonController.OnGameStartedRPC.AddListener(OnGameStartedRPC);
         }
         
         private void OnGameStartedRPC(double gameEndTime)
@@ -20,10 +20,9 @@ namespace Controller
             GameEndTime = gameEndTime;
             IsGameStarted = true;
             
-            _searchGamePhotonController.EnableView(false);
-            
+            _gameSearchPhotonController.EnableView(false);
             _gamePhotonController.EnableView(true);
-            _gamePhotonController.InitializeView(gameEndTime);
+            _gamePhotonController.InitializeView();
         }
     }
 }
