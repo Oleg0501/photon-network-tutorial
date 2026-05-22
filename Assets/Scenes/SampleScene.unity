@@ -526,6 +526,7 @@ GameObject:
   m_Component:
   - component: {fileID: 833653985}
   - component: {fileID: 833653986}
+  - component: {fileID: 833653987}
   m_Layer: 0
   m_Name: GamePhotonController
   m_TagString: Untagged
@@ -562,6 +563,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameContext: {fileID: 1522541264}
   _gameView: {fileID: 620181835}
+--- !u!114 &833653987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833653984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 2
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1004423665
 GameObject:
   m_ObjectHideFlags: 0

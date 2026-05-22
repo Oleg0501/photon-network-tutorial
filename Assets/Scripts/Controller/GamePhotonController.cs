@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Controller
 {
+    [RequireComponent(typeof(PhotonView))]
     public class GamePhotonController : MonoBehaviourPunCallbacks
     {
         [SerializeField] private GameContext _gameContext;
