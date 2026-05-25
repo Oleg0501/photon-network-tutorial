@@ -26,6 +26,11 @@ namespace Controller
             SetStatusText("Game is started");
         }
         
+        public override void OnLeftRoom()
+        {
+            OnLeaveRoom?.Invoke();
+        }
+        
         private void Awake()
         {
             _gameView.GameButton.onClick.AddListener(OnGameButtonClicked);
@@ -56,8 +61,6 @@ namespace Controller
         
         private void EndGameAndLeaveRoom()
         {
-            SetStatusText("Game is complete. You can start search again for next game");
-
             _gameView.GameButton.interactable = false;
             _gameView.SetTimeText("0.0");
             
@@ -86,7 +89,7 @@ namespace Controller
 
         private void OnCancelButtonClicked()
         {
-            OnLeaveRoom?.Invoke();
+            EndGameAndLeaveRoom();
         }
     }
 }
