@@ -11,6 +11,7 @@ namespace Controller
     public class GameSearchPhotonController : MonoBehaviourPunCallbacks
     {
         public UnityEvent<double> OnGameStartedRPC = new();
+        public UnityEvent OnLeaveRoom = new();
         
         [SerializeField] private GameContext _gameContext;
         
@@ -26,6 +27,12 @@ namespace Controller
         public void EnableView(bool enable)
         {
             _gameSearchView.gameObject.SetActive(enable);
+        }
+
+        public void InitializeView()
+        {
+            _gameSearchView.SearchButton.interactable = true;
+            _gameSearchView.CancelButton.gameObject.SetActive(false);
         }
         
         #region PunCallbacks
@@ -50,6 +57,7 @@ namespace Controller
                 TryStartGameAsMasterClient();
             }
             
+            _gameSearchView.CancelButton.gameObject.SetActive(true);
             SetStatusText($"You entered to room. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
         }
         
@@ -59,7 +67,7 @@ namespace Controller
             var roomName = "ColorGame_" + Guid.NewGuid().ToString("N");
             
             PhotonNetwork.CreateRoom(roomName, roomOptions);
-            SetStatusText($"The room not founded. Creating a new room...");
+            SetStatusText("The room not founded. Creating a new room...");
         }
         
         public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -72,13 +80,19 @@ namespace Controller
             SetStatusText($"Player connected. Players count: {PhotonNetwork.CurrentRoom.PlayerCount}/{_maxPlayers}");
         }
 
+        public override void OnLeftRoom()
+        {
+            OnLeaveRoom?.Invoke();
+        }
+
         #endregion
         
         private void Awake()
         {
             _gameSearchView.SearchButton.onClick.AddListener(OnSearchButtonClicked);
+            _gameSearchView.CancelButton.onClick.AddListener(OnCancelButtonClicked);
         }
-
+        
         private void OnDestroy()
         {
             _gameSearchView.SearchButton.onClick.RemoveListener(OnSearchButtonClicked);
@@ -123,9 +137,21 @@ namespace Controller
             else
             {
                 PhotonNetwork.ConnectUsingSettings();
+                SetStatusText("Trying to connect to Photon...");
+            }
+        }
+        
+        private void OnCancelButtonClicked()
+        {
+            _gameSearchView.SearchButton.interactable = true;
+            _gameSearchView.CancelButton.gameObject.SetActive(false);
+
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.LeaveRoom();
             }
             
-            SetStatusText("Trying to connect to Photon...");
+            SetStatusText("");
         }
     }
 }

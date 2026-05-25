@@ -8,11 +8,13 @@ namespace UI
     public class GameView : MonoBehaviour
     {
         [SerializeField] private Button _gameButton;
+        [SerializeField] private Button _cancelButton;
         [SerializeField] private Image _gameImage;
         [SerializeField] private TextMeshProUGUI _timeText;
         [SerializeField] private TextMeshProUGUI _statusText;
         
         public Button GameButton => _gameButton;
+        public Button CancelButton => _cancelButton;
         public TextMeshProUGUI StatusText => _statusText;
         
         public void StartGame()

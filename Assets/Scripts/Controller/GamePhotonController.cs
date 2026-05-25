@@ -1,12 +1,15 @@
 ﻿using Photon.Pun;
 using UI;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Controller
 {
     [RequireComponent(typeof(PhotonView))]
     public class GamePhotonController : MonoBehaviourPunCallbacks
     {
+        public UnityEvent OnLeaveRoom = new();
+        
         [SerializeField] private GameContext _gameContext;
         
         [Header("View")]
@@ -26,11 +29,13 @@ namespace Controller
         private void Awake()
         {
             _gameView.GameButton.onClick.AddListener(OnGameButtonClicked);
+            _gameView.CancelButton.onClick.AddListener(OnCancelButtonClicked);
         }
 
         private void OnDestroy()
         {
             _gameView.GameButton.onClick.RemoveListener(OnGameButtonClicked);
+            _gameView.CancelButton.onClick.RemoveListener(OnCancelButtonClicked);
         }
 
         private void Update()
@@ -51,7 +56,7 @@ namespace Controller
         
         private void EndGameAndLeaveRoom()
         {
-            SetStatusText("Game is complete");
+            SetStatusText("Game is complete. You can start search again for next game");
 
             _gameView.GameButton.interactable = false;
             _gameView.SetTimeText("0.0");
@@ -77,6 +82,11 @@ namespace Controller
         {
             var playerColor = _gameView.GetLocalPlayerColor();
             photonView.RPC(nameof(SetImageColorRPC), RpcTarget.All, playerColor.r, playerColor.g, playerColor.b);
+        }
+
+        private void OnCancelButtonClicked()
+        {
+            OnLeaveRoom?.Invoke();
         }
     }
 }
