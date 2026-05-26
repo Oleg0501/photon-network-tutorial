@@ -69,6 +69,13 @@ namespace Controller
             PhotonNetwork.CreateRoom(roomName, roomOptions);
             SetStatusText("The room not founded. Creating a new room...");
         }
+
+        public override void OnCreateRoomFailed(short returnCode, string message)
+        {
+            _gameSearchView.SearchButton.interactable = true;
+            _gameSearchView.CancelButton.gameObject.SetActive(false);
+            SetStatusText("Room creation failed. Try repeat search...");
+        }
         
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
@@ -83,6 +90,11 @@ namespace Controller
         public override void OnLeftRoom()
         {
             OnLeaveRoom?.Invoke();
+        }
+        
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            SetStatusText($"Отключено от Photon: {cause}");
         }
 
         #endregion

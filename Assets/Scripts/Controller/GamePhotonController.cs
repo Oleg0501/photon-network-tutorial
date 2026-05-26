@@ -1,4 +1,5 @@
 ﻿using Photon.Pun;
+using Photon.Realtime;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -25,11 +26,20 @@ namespace Controller
             _gameView.StartGame();
             SetStatusText("Game is started");
         }
-        
+
+        #region PunCallbacks
+
         public override void OnLeftRoom()
         {
             OnLeaveRoom?.Invoke();
         }
+
+        public override void OnDisconnected(DisconnectCause cause)
+        {
+            SetStatusText($"Отключено от Photon: {cause}");
+        }
+
+        #endregion
         
         private void Awake()
         {
